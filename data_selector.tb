@@ -1,0 +1,40 @@
+`timescale 1ns / 1ps
+
+module data_selector_tb;
+
+    reg [7:0] in;
+    reg [2:0] sel;
+    reg mux_enable;
+    wire mux_out;
+    wire [7:0] demux_out;
+
+    data_selector uut (
+        .in(in),
+        .sel(sel),
+        .mux_enable(mux_enable),
+        .mux_out(mux_out),
+        .demux_out(demux_out)
+    );
+
+    initial begin
+       
+        in = 8'b00000000;
+        sel = 3'b000;
+        mux_enable = 1'b1;
+        
+        #10 in = 8'b10101010; sel = 3'b000;  // mux_out = in[0]
+        #10 sel = 3'b001;                    // mux_out = in[1]
+        #10 sel = 3'b010;                    // mux_out = in[2]
+        #10 sel = 3'b011;                    // mux_out = in[3]
+        #10 sel = 3'b100;                    // mux_out = in[4]
+        #10 sel = 3'b101;                    // mux_out = in[5]
+        #10 sel = 3'b110;                    // mux_out = in[6]
+        #10 sel = 3'b111;                    // mux_out = in[7]
+
+        #10 mux_enable = 0; sel = 3'b100;    // Should reset demux_out
+        #10 mux_enable = 1; sel = 3'b010;
+
+        #10 $finish;
+    ends
+
+endmodule
